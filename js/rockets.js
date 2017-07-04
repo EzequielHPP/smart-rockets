@@ -21,8 +21,10 @@ function Rocket(w, h, dna) {
 
 Rocket.prototype.update = function () {
     this.timeToReachTarget++;
+
+    // Did we hit the target? Hurray!!
     var distanceFromTarget = dist(this.position.x, this.position.y, target.x, target.y);
-    if (distanceFromTarget < 10) {
+    if (distanceFromTarget <= 20) {
         this.completed = true;
         this.timeToReachTarget--;
     }
@@ -84,17 +86,19 @@ Rocket.prototype.show = function () {
     // Required vector render (push, translate, pop)
     push();
     noStroke();
-    if(this.crashed){
-        fill(0,0,255,.5);
-    } else if(this.completed){
-        fill(0,255,0);
-    } else {
-        fill(255);
-    }
+    fill(255,255,255,.4);
     translate(this.position.x, this.position.y);
     rotate(this.velocity.heading());
     rectMode(CENTER);
     rect(0, 0, this.height, this.width);
+    rotate(this.velocity.heading() * -1);
+    if (this.completed) {;
+        image(rocket_success, 0, 0, this.width, this.height - (this.height/2));
+    } else if (this.crashed) {
+        image(rocket_failed, 0, 0, this.width*2, this.height - (this.height/2));
+    } else {
+        image(rocket, 0, 0, this.width, this.height - (this.height/2));
+    }
     pop();
 };
 

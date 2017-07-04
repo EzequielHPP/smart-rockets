@@ -7,9 +7,10 @@ function DNA(parsedGene){
         this.dna = parsedGene;
     } else {
         this.dna = [];
+        angleMode(DEGREES);
         for(var dnaX = 0; dnaX < lifeSpan; dnaX++){
             this.dna[dnaX] = p5.Vector.random2D();
-            this.dna[dnaX].setMag(maxForce);
+            this.dna[dnaX].setMag(maxForce / 2);
         }
     }
 }
