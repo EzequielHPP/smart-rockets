@@ -2,21 +2,25 @@
  * Created by ezequielpereira on 03/07/2017.
  */
 
+var population = [];
 var rockets = [];
-var numberOfRockets = 10;
-var lifeSpan = 400;
+var numberOfRockets = 25;
+var numberOfObstacles = 1;
+var lifeSpan = 300;
 var rocketSize = {"width": 5, "height": 30};
-var maxforce = 1;
+var maxForce = 1;
 var currentLifeSpanFrame = 0;
 var obstacles = [];
 var target;
 var animationOfTarget = 0;
 var animationOfTargetLength = 0;
 var animationOfTargetCircles = [];
+var currentGeneration = 0;
 
 function setup() {
     // Create canvas and setup background
-    createCanvas(640, 480);
+    var canvas = createCanvas(640, 480);
+    canvas.parent('canvasContainer');
     background(0);
 
     // Generate Target
@@ -26,7 +30,7 @@ function setup() {
     // Generate Obstacles
     generateObstacles();
 
-    generateRockets();
+    population = new Population();
 }
 
 // Loop trough frames
@@ -40,27 +44,25 @@ function draw() {
     for (var obstacleX = 0; obstacleX < obstacles.length; obstacleX++) {
         fill(255);
         noStroke();
-        rect(obstacles[obstacleX].x, obstacles[obstacleX].y + ((height / (obstacles.length+1)) * obstacleX) , obstacles[obstacleX].w, 20);
+        rect(obstacles[obstacleX].x, obstacles[obstacleX].y + ((height / (obstacles.length+1)) * obstacleX) , obstacles[obstacleX].width, obstacles[obstacleX].height);
     }
 
-    // Render Rockets
-    for (var rocketX = 0; rocketX < rockets.length; rocketX++) {
-        rockets[rocketX].show();
-    }
+    population.run();
 
     currentLifeSpanFrame++;
     if(currentLifeSpanFrame >= lifeSpan){
+        population.evaluate();
+        population.selection();
+
         currentLifeSpanFrame = 0;
+        currentGeneration++;
+        document.getElementById('generation').innerHTML = "Generation " + currentGeneration;
     }
 }
 
-// Add Rockets
-function generateRockets() {
-    for (var rocketX = 0; rocketX < numberOfRockets; rocketX++) {
-        rockets.push(new Rocket(rocketSize['width'], rocketSize['height'], new DNA()));
-    }
-}
-
+/**
+ * Performs an orb animation in the target
+ */
 function animateTarget(){
     fill(255);
     ellipse(target.x, target.y, 16, 16);
@@ -83,9 +85,12 @@ function animateTarget(){
     }
 }
 
+/**
+ * This places an n amount of obstacles randomly on the screen
+ */
 function generateObstacles() {
 
-    for (var obstacleX = 0; obstacleX < 2; obstacleX++) {
+    for (var obstacleX = 0; obstacleX < numberOfObstacles; obstacleX++) {
         var randomY = random(1, (height / 4));
         var randomX = random(0, width);
         var randomW = random(0, width / 2);
@@ -93,6 +98,6 @@ function generateObstacles() {
         if(randomW < 100){
             randomW = 100;
         }
-        obstacles[obstacleX] = {'x': randomX, 'y': randomY + target.y + 20, 'w': randomW, 'h': 10};
+        obstacles[obstacleX] = {'x': randomX, 'y': randomY + target.y + 20, 'width': randomW, 'height': 10};
     }
 }

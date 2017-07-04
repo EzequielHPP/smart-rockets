@@ -13,9 +13,9 @@ function Rocket(w, h, dna) {
     this.acceleration = createVector();
     // Create starting position
     this.position = createVector(width / 2, height - this.height);
-
     this.completed = false;
     this.crashed = false;
+    this.fitness = 0;
 }
 
 Rocket.prototype.update = function () {
@@ -27,13 +27,25 @@ Rocket.prototype.update = function () {
 
     // Did it crash into any obstacles?
     for (var tmpObsctacle = 0; tmpObsctacle < obstacles.length; tmpObsctacle++) {
-        if (this.position.x + this.width / 2 > obstacles[tmpObsctacle].x && this.position.x + this.width / 2 < obstacles[tmpObsctacle].x + obstacles[tmpObsctacle].w && this.position.y + this.height / 2 > obstacles[tmpObsctacle].y && this.position.y + this.height / 2  < obstacles[tmpObsctacle].y + obstacles[tmpObsctacle].h) {
-            this.crashed = true;
+        var obstacleX = obstacles[tmpObsctacle].x;
+        var obstacleY = obstacles[tmpObsctacle].y;
+        var obstacleH = obstacles[tmpObsctacle].height;
+        var obstacleW = obstacles[tmpObsctacle].width;
+
+        var rocketX = this.position.x;
+        var rocketY = this.position.y;
+        var rocketH = this.height;
+        var rocketW = this.width;
+
+        if ((parseInt(rocketX) + rocketW / 2) > obstacleX && (parseInt(rocketX) + parseInt(rocketW) / 2) < obstacleX + obstacleW) {
+            if (((parseInt(rocketY) + rocketH / 2) > obstacleY + obstacleH && (parseInt(rocketY) + rocketH / 2) < obstacleY + obstacleH * 2)) {
+                this.crashed = true;
+            }
         }
     }
 
     // Did we hit any of the walls?
-    if (this.position.x > width - this.width / 2  || this.position.x < this.width / 2) {
+    if (this.position.x > width - this.width / 2 || this.position.x < this.width / 2) {
         this.crashed = true;
     }
     if (this.position.y > height || this.position.y < 0) {
@@ -58,7 +70,13 @@ Rocket.prototype.show = function () {
     // Required vector render (push, translate, pop)
     push();
     noStroke();
-    fill(255);
+    if(this.crashed){
+        fill(0,0,255,.5);
+    } else if(this.completed){
+        fill(0,255,0);
+    } else {
+        fill(255);
+    }
     translate(this.position.x, this.position.y);
     rotate(this.velocity.heading());
     rectMode(CENTER);
@@ -68,4 +86,21 @@ Rocket.prototype.show = function () {
 
 Rocket.prototype.applyForce = function (force) {
     this.acceleration.add(force);
+};
+
+Rocket.prototype.calcFitness = function() {
+    // Get the distance between the rocket and the target
+    var distance = dist(this.position.x, this.position.y, target.x, target.y);
+
+    // Calculate the overall fitness values
+    this.fitness = map(distance, 0, width, width, 0);
+
+    // Is it completed then give it a boost on fitness
+    if (this.completed) {
+        this.fitness *= 10;
+    }
+    // Has it crashed? then bring down the value of fitness
+    if (this.crashed) {
+        this.fitness /= 10;
+    }
 };

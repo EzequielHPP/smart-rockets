@@ -9,7 +9,7 @@ function DNA(parsedGene){
         this.dna = [];
         for(var dnaX = 0; dnaX < lifeSpan; dnaX++){
             this.dna[dnaX] = p5.Vector.random2D();
-            this.dna[dnaX].setMag(maxforce);
+            this.dna[dnaX].setMag(maxForce);
         }
     }
 }
@@ -30,4 +30,28 @@ DNA.prototype.mate = function(targetPartner){
     }
 
     return new DNA(newDNA);
+};
+
+// Have a baby with the genes from himself and a partner
+DNA.prototype.crossover = function(partner) {
+    var newgenes = [];
+    var mid = floor(random(this.dna.length));
+    for (var i = 0; i < this.dna.length; i++) {
+        if (i > mid) {
+            newgenes[i] = this.dna[i];
+        } else {
+            newgenes[i] = partner.dna[i];
+        }
+    }
+    return new DNA(newgenes);
+};
+
+// As a the real DNA there's a small percentage of having a mutation
+DNA.prototype.mutation = function() {
+    for (var i = 0; i < this.dna.length; i++) {
+        if (random(1) < 0.01) {
+            this.dna[i] = p5.Vector.random2D();
+            this.dna[i].setMag(maxForce);
+        }
+    }
 };
