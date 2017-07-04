@@ -6,7 +6,8 @@ var population = [];
 var rockets = [];
 var numberOfRockets = 25;
 var numberOfObstacles = 1;
-var lifeSpan = 300;
+var lifeSpan = 200;
+var maximumVelocity = 5;
 var rocketSize = {"width": 5, "height": 30};
 var maxForce = 1;
 var currentLifeSpanFrame = 0;
@@ -16,6 +17,7 @@ var animationOfTarget = 0;
 var animationOfTargetLength = 0;
 var animationOfTargetCircles = [];
 var currentGeneration = 0;
+var totalCompleted = [];
 
 function setup() {
     // Create canvas and setup background
@@ -25,7 +27,7 @@ function setup() {
 
     // Generate Target
     target = createVector(width / 2, 50);
-    animationOfTargetCircles[0] = [18,18];
+    animationOfTargetCircles[0] = [18, 18];
 
     // Generate Obstacles
     generateObstacles();
@@ -44,44 +46,46 @@ function draw() {
     for (var obstacleX = 0; obstacleX < obstacles.length; obstacleX++) {
         fill(255);
         noStroke();
-        rect(obstacles[obstacleX].x, obstacles[obstacleX].y + ((height / (obstacles.length+1)) * obstacleX) , obstacles[obstacleX].width, obstacles[obstacleX].height);
+        rect(obstacles[obstacleX].x, obstacles[obstacleX].y + ((height / (obstacles.length + 1)) * obstacleX), obstacles[obstacleX].width, obstacles[obstacleX].height);
     }
 
+    // Make all the rockets move
     population.run();
 
     currentLifeSpanFrame++;
-    if(currentLifeSpanFrame >= lifeSpan){
+    if (currentLifeSpanFrame >= lifeSpan) {
         population.evaluate();
         population.selection();
 
+        totalCompleted = [];
         currentLifeSpanFrame = 0;
         currentGeneration++;
-        document.getElementById('generation').innerHTML = "Generation " + currentGeneration;
     }
+    document.getElementById('generation').innerHTML = "Generation " + currentGeneration + ' (Completed: ' + (totalCompleted.length) + '/' + numberOfRockets + ')';
 }
 
 /**
  * Performs an orb animation in the target
  */
-function animateTarget(){
+function animateTarget() {
     fill(255);
     ellipse(target.x, target.y, 16, 16);
     noFill();
     stroke(255);
     animationOfTarget++;
     animationOfTargetLength++;
-    if(animationOfTarget > lifeSpan / 6){
+    if (animationOfTarget > lifeSpan / 6) {
         animationOfTarget = 0;
         animationOfTargetLength = 0;
-        animationOfTargetCircles = [[18,18]];
+        animationOfTargetCircles = [[18, 18]];
     }
-    for(var circleX = 0; circleX < animationOfTargetCircles.length; circleX++) {
-        stroke(255,255,255,(100 - (animationOfTarget * 100 ) / (lifeSpan / 6)));
+    for (var circleX = 0; circleX < animationOfTargetCircles.length; circleX++) {
+        stroke(255, 255, 255, (100 - (animationOfTarget * 100 ) / (lifeSpan / 6)));
         ellipse(target.x, target.y, 18 + animationOfTarget - (18 * circleX ), 18 + animationOfTarget - (18 * circleX ));
     }
 
-    if(animationOfTargetLength === 18 || animationOfTargetLength === 36){
-        animationOfTargetCircles.push([18,18]);
+    if (animationOfTargetLength === 18 || animationOfTargetLength === 36) {
+        animationOfTargetCircles.push([18, 18]);
     }
 }
 
@@ -92,10 +96,15 @@ function generateObstacles() {
 
     for (var obstacleX = 0; obstacleX < numberOfObstacles; obstacleX++) {
         var randomY = random(1, (height / 4));
-        var randomX = random(0, width);
+        var randomX = random(0, width - ((20 * width) / 100));
         var randomW = random(0, width / 2);
+        if(randomX < ((10 * width) / 100)){
+            randomX = ((10 * width) / 100);
+        } else if(randomX+randomW > width - ((10 * width) / 100)){
+            randomX = width - ((10 * width) / 100) - randomW;
+        }
 
-        if(randomW < 100){
+        if (randomW < 100) {
             randomW = 100;
         }
         obstacles[obstacleX] = {'x': randomX, 'y': randomY + target.y + 20, 'width': randomW, 'height': 10};

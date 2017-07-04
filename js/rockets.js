@@ -16,13 +16,15 @@ function Rocket(w, h, dna) {
     this.completed = false;
     this.crashed = false;
     this.fitness = 0;
+    this.timeToReachTarget = 0;
 }
 
 Rocket.prototype.update = function () {
+    this.timeToReachTarget++;
     var distanceFromTarget = dist(this.position.x, this.position.y, target.x, target.y);
     if (distanceFromTarget < 10) {
         this.completed = true;
-        this.pos = target.copy();
+        this.timeToReachTarget--;
     }
 
     // Did it crash into any obstacles?
@@ -58,7 +60,7 @@ Rocket.prototype.update = function () {
         this.velocity.add(this.acceleration);
         this.position.add(this.velocity);
         this.acceleration.mult(0);
-        this.velocity.limit(4);
+        this.velocity.limit(maximumVelocity);
     }
 };
 
@@ -66,6 +68,18 @@ Rocket.prototype.show = function () {
 
     // Update the position
     this.update();
+
+    if (this.completed) {
+        var alreadyInThePile = false;
+        for (var completedRockets = 0; completedRockets <= totalCompleted.length; completedRockets++) {
+            if (totalCompleted[completedRockets] === this) {
+                alreadyInThePile = true;
+            }
+        }
+        if (!alreadyInThePile) {
+            totalCompleted.push(this);
+        }
+    }
 
     // Required vector render (push, translate, pop)
     push();
@@ -98,6 +112,9 @@ Rocket.prototype.calcFitness = function() {
     // Is it completed then give it a boost on fitness
     if (this.completed) {
         this.fitness *= 10;
+        if (totalCompleted[0] === this) {
+            this.fitness *= 10;
+        }
     }
     // Has it crashed? then bring down the value of fitness
     if (this.crashed) {
