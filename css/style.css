@@ -1,0 +1,148 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
+}
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f0f0;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1024px;
+  padding: 20px 20px 0 20px;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1)
+}
+
+main section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+}
+
+h1 {
+  margin-bottom: 10px;
+}
+
+p {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+#canvasContainer {
+  position: relative;
+  width: 640px;
+  height: 480px;
+  margin-bottom: 20px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.stats {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 20px;
+  gap: 20px;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 500px;
+}
+
+.controls div {
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+  margin-bottom: 10px;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: center;
+  align-items: stretch;
+  padding: 5px;
+}
+
+.controls div:nth-child(odd) {
+  background-color: #f0f0f0;
+}
+
+.controls div label {
+  width: 100px;
+}
+
+.controls div input {
+  width: 100px;
+}
+
+.controls div output {
+  width: 50px;
+}
+
+.controls div button {
+  width: 100px;
+  padding: 10px;
+  margin: 0 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+}
+
+.controls div button:hover {
+  background-color: #45a049;
+}
+
+.controls div button:active {
+  background-color: #3e8e41;
+}
+
+.controls div button#stopButton {
+  background-color: #f44336;
+}
+
+.controls div button#stopButton:hover {
+  background-color: #d32f2f;
+}
+
+.controls div button#stopButton:active {
+  background-color: #b71c1c;
+}
+
+.controls div button#resetButton {
+  background-color: #ff9800;
+}
+
+.controls div button#resetButton:hover {
+  background-color: #e68a00;
+}
+
+.controls div button#resetButton:active {
+  background-color: #d17f00;
+}
+
+footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: calc(100% + 40px);
+  height: 50px;
+  background-color: #f0f0f0;
+  border-radius: 0 0 5px 5px;
+  gap: 20px;
+}
